@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Florence | Luxury Cafe & Bistro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#0a0a0a',
+                        cardbg: '#121212',
+                        bordergray: '#262626',
+                        subtle: '#8e8e93',
+                        softwhite: '#f5f5f7'
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #f5f5f7;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-serif {
+            font-family: 'Cinzel', serif;
+        }
+        /* Hide scrollbars for slick horizontal navigation */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .img-overlay {
+            background: linear-gradient(180deg, rgba(18,18,18,0) 50%, rgba(18,18,18,0.95) 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-white selection:text-black">
+
+    <!-- Top Header -->
+    <header class="relative border-b border-bordergray bg-black/90 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 py-6 text-center">
+            <!-- Brand Logo / Monogram -->
+            <div class="inline-block border border-white/20 px-3 py-1 mb-3">
+                <span class="font-serif tracking-widest text-xs uppercase text-white/70">Café & Bistro</span>
+            </div>
+            
+            <h1 class="font-serif text-3xl sm:text-5xl font-light tracking-[0.2em] text-white uppercase mb-2">
+                FLORENCE
+            </h1>
+            <p class="text-[11px] sm:text-xs tracking-widest text-subtle uppercase mb-6">
+                Meknes • Artisanal Drinks & Haute Bakery
+            </p>
+
+            <!-- Search Bar -->
+            <div class="relative max-w-md mx-auto">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-subtle">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </div>
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    onkeyup="filterItems()"
+                    placeholder="Search menu (e.g. Latte, Tart, Avocado)..." 
+                    class="w-full pl-10 pr-10 py-2.5 bg-cardbg border border-bordergray rounded-none text-xs text-white placeholder-subtle focus:outline-none focus:border-white transition-colors tracking-wide"
+                >
+                <button 
+                    id="clearSearch" 
+                    onclick="clearSearchInput()" 
+                    class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-subtle hover:text-white"
+                >
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sticky Category Navigation Bar -->
+        <div class="border-t border-bordergray/60 bg-black">
+            <div class="max-w-5xl mx-auto px-4">
+                <div class="flex space-x-1 overflow-x-auto no-scrollbar py-2.5 justify-start sm:justify-center" id="categoryContainer">
+                    <!-- Dynamic Category Buttons -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full">
+
+        <!-- Active Category Header & Count -->
+        <div class="flex items-center justify-between mb-8 border-b border-bordergray pb-3">
+            <h2 id="currentCategoryTitle" class="font-serif text-lg sm:text-xl tracking-widest text-white uppercase">
+                All Items
+            </h2>
+            <span id="itemCount" class="text-[10px] tracking-widest uppercase text-subtle font-mono">
+                0 Items
+            </span>
+        </div>
+
+        <!-- Empty Search State -->
+        <div id="emptyState" class="hidden text-center py-20 px-4 border border-dashed border-bordergray my-4">
+            <i class="fa-solid fa-mug-saucer text-2xl text-subtle mb-3"></i>
+            <h3 class="font-serif text-sm tracking-widest text-white uppercase mb-1">No Menu Items Found</h3>
+            <p class="text-xs text-subtle">Please try another search term or category.</p>
+        </div>
+
+        <!-- Photo Menu Grid -->
+        <div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamic Cards Populated via JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- Luxury Footer Section -->
+    <footer class="border-t border-bordergray bg-cardbg/50 mt-16 pt-12 pb-10">
+        <div class="max-w-5xl mx-auto px-4">
+            
+            <!-- Table QR Ordering Note -->
+            <div class="text-center pb-10 border-b border-bordergray max-w-xl mx-auto">
+                <i class="fa-solid fa-qrcode text-xl text-white/80 mb-3"></i>
+                <p class="text-xs text-white/90 tracking-wider uppercase font-medium mb-1">Pure Digital Viewing Menu</p>
+                <p class="text-xs text-subtle leading-relaxed">
+                    Scan the QR code at your table anytime to view items. Please place your order directly with your server.
+                </p>
+            </div>
+
+            <!-- Venue Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 py-10 text-center md:text-left text-xs border-b border-bordergray">
+                <!-- Location -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-center md:justify-start space-x-2 text-white">
+                        <i class="fa-solid fa-location-dot text-subtle"></i>
+                        <span class="font-serif uppercase tracking-wider text-xs">Location</span>
+                    </div>
+                    <p class="text-subtle leading-relaxed">Ville Nouvelle, Rue Antirabi<br>Meknes, Morocco</p>
+                </div>
+
+                <!-- Operating Hours -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-center md:justify-start space-x-2 text-white">
+                        <i class="fa-solid fa-clock text-subtle"></i>
+                        <span class="font-serif uppercase tracking-wider text-xs">Hours of Service</span>
+                    </div>
+                    <p class="text-subtle leading-relaxed">Monday – Sunday<br>08:00 AM – 11:00 PM</p>
+                </div>
+
+                <!-- Wi-Fi Network -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-center md:justify-start space-x-2 text-white">
+                        <i class="fa-solid fa-wifi text-subtle"></i>
+                        <span class="font-serif uppercase tracking-wider text-xs">Guest Wi-Fi</span>
+                    </div>
+                    <p class="text-subtle leading-relaxed">
+                        Network: <span class="font-mono text-white">FLORENCE_GUEST</span><br>
+                        Password: <span class="font-mono text-white">florence2026</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bottom Branding -->
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-subtle space-y-4 sm:space-y-0">
+                <div class="font-serif tracking-widest text-white/60">FLORENCE CAFE © 2026</div>
+                <div class="flex space-x-6 text-sm">
+                    <a href="#" class="text-subtle hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="text-subtle hover:text-white transition-colors"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="text-subtle hover:text-white transition-colors"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- JavaScript Data & UI Logic -->
+    <script>
+        // Categories Definition
+        const menuCategories = [
+            { id: 'all', name: 'All' },
+            { id: 'coffee', name: 'Coffee & Espresso' },
+            { id: 'tea', name: 'Artisanal Teas' },
+            { id: 'bakery', name: 'Bakery & Pastries' },
+            { id: 'brunch', name: 'Light Bites & Brunch' },
+            { id: 'signature', name: 'Signature Cold Drinks' }
+        ];
+
+        // High-Resolution Minimalist Photo Menu Database
+        const menuItems = [
+            {
+                id: '1',
+                name: 'Florence Double Espresso',
+                category: 'coffee',
+                price: '20 DH',
+                desc: 'Dark roast single-origin Ethiopian beans with balanced notes of dark cacao and citrus peel.',
+                badge: 'Signature',
+                image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '2',
+                name: 'Velvet Flat White',
+                category: 'coffee',
+                price: '28 DH',
+                desc: 'Ristretto espresso shots poured under silky microfoam milk in high-contrast porcelain.',
+                badge: 'Popular',
+                image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '3',
+                name: 'Iced Vanilla Oat Latte',
+                category: 'coffee',
+                price: '34 DH',
+                desc: 'Slow-poured espresso over chilled organic oat milk and natural Madagascar vanilla syrup.',
+                badge: 'Vegan',
+                image: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '4',
+                name: 'Ceremonial Matcha Latte',
+                category: 'signature',
+                price: '38 DH',
+                desc: 'First-harvest Uji ceremonial matcha whisked to order with steamed whole or almond milk.',
+                badge: 'Organic',
+                image: 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '5',
+                name: 'Artisanal Butter Croissant',
+                category: 'bakery',
+                price: '18 DH',
+                desc: 'Flaky French pastry baked fresh daily with pure Normandy butter.',
+                badge: 'Fresh Daily',
+                image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '6',
+                name: 'Pistachio Raspberry Tart',
+                category: 'bakery',
+                price: '36 DH',
+                desc: 'Crisp sable shell filled with pistachio frangipane, topped with fresh raspberries.',
+                badge: 'Chef Favorite',
+                badgeColor: 'border-white text-white',
+                image: 'https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '7',
+                name: 'Truffle Avocado Sourdough',
+                category: 'brunch',
+                price: '55 DH',
+                desc: 'Toasted artisanal sourdough, smashed avocado, poached organic egg, and truffle oil drizzle.',
+                badge: 'House Specialty',
+                image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '8',
+                name: 'Smoked Salmon Brioche',
+                category: 'brunch',
+                price: '62 DH',
+                desc: 'Toasted brioche, Norwegian smoked salmon, dill cream cheese, and capers.',
+                badge: 'Premium',
+                image: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '9',
+                name: 'Jasmine Silver Needle Tea',
+                category: 'tea',
+                price: '28 DH',
+                desc: 'Delicate white tea buds scented with fresh jasmine blossoms served in crystal glassware.',
+                badge: 'Organic',
+                image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '10',
+                name: 'Sparkling Hibiscus Tonic',
+                category: 'signature',
+                price: '32 DH',
+                desc: 'Cold-brewed Egyptian hibiscus, sparkling mineral water, fresh lime, and mint.',
+                badge: 'Refreshing',
+                image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '11',
+                name: 'Dark Chocolate Pain au Chocolat',
+                category: 'bakery',
+                price: '22 DH',
+                desc: 'Laminated French dough layered with 70% Valrhona dark chocolate bars.',
+                badge: 'Fresh Daily',
+                image: 'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '12',
+                name: 'Chilled Espresso Tonic',
+                category: 'signature',
+                price: '30 DH',
+                desc: 'Double shot espresso layered over premium fever-tree tonic water and grapefruit zest.',
+                badge: 'Signature',
+                image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=800&q=80'
+            }
+        ];
+
+        let currentCategory = 'all';
+
+        // DOM Elements
+        const categoryContainer = document.getElementById('categoryContainer');
+        const menuGrid = document.getElementById('menuGrid');
+        const currentCategoryTitle = document.getElementById('currentCategoryTitle');
+        const itemCount = document.getElementById('itemCount');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const emptyState = document.getElementById('emptyState');
+
+        // Init App
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCategories();
+            renderMenuItems();
+        });
+
+        // Render Navigation Tabs
+        function renderCategories() {
+            categoryContainer.innerHTML = menuCategories.map(cat => `
+                <button 
+                    onclick="selectCategory('${cat.id}')"
+                    class="category-btn text-xs tracking-wider uppercase px-4 py-2 transition-all font-serif ${
+                        currentCategory === cat.id 
+                        ? 'bg-white text-black font-semibold' 
+                        : 'text-subtle hover:text-white border border-transparent'
+                    }"
+                    data-cat="${cat.id}"
+                >
+                    ${cat.name}
+                </button>
+            `).join('');
+        }
+
+        // Switch Active Category
+        function selectCategory(catId) {
+            currentCategory = catId;
+            
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.dataset.cat === catId) {
+                    btn.className = "category-btn text-xs tracking-wider uppercase px-4 py-2 transition-all font-serif bg-white text-black font-semibold";
+                } else {
+                    btn.className = "category-btn text-xs tracking-wider uppercase px-4 py-2 transition-all font-serif text-subtle hover:text-white border border-transparent";
+                }
+            });
+
+            const activeCatObj = menuCategories.find(c => c.id === catId);
+            currentCategoryTitle.textContent = activeCatObj ? activeCatObj.name : 'Items';
+
+            renderMenuItems();
+        }
+
+        // Filter and Display Items
+        function renderMenuItems() {
+            const query = searchInput.value.toLowerCase().trim();
+
+            const filtered = menuItems.filter(item => {
+                const matchesCat = currentCategory === 'all' || item.category === currentCategory;
+                const matchesQuery = item.name.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query);
+                return matchesCat && matchesQuery;
+            });
+
+            itemCount.textContent = `${filtered.length} ITEM${filtered.length === 1 ? '' : 'S'}`;
+
+            if (filtered.length === 0) {
+                menuGrid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            menuGrid.innerHTML = filtered.map(item => `
+                <article class="bg-cardbg border border-bordergray overflow-hidden group hover:border-white/40 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <!-- Image Container -->
+                        <div class="relative h-52 overflow-hidden bg-black">
+                            <img 
+                                src="${item.image}" 
+                                alt="${item.name}" 
+                                loading="lazy"
+                                class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"
+                                onerror="this.src='https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80'"
+                            />
+                            <div class="absolute inset-0 img-overlay pointer-events-none"></div>
+
+                            ${item.badge ? `
+                                <span class="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-white text-[9px] uppercase tracking-widest px-2.5 py-1 border border-bordergray">
+                                    ${item.badge}
+                                </span>
+                            ` : ''}
+
+                            <div class="absolute bottom-3 right-3 bg-black/90 text-white font-mono text-xs px-2.5 py-1 border border-bordergray">
+                                ${item.price}
+                            </div>
+                        </div>
+
+                        <!-- Text Details -->
+                        <div class="p-5">
+                            <h3 class="font-serif text-base font-medium tracking-wide text-white mb-2 group-hover:text-white/90">
+                                ${item.name}
+                            </h3>
+                            <p class="text-xs text-subtle leading-relaxed font-light">
+                                ${item.desc}
+                            </p>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        // Live Search Input Logic
+        function filterItems() {
+            if (searchInput.value.trim() !== '') {
+                clearSearchBtn.classList.remove('hidden');
+            } else {
+                clearSearchBtn.classList.add('hidden');
+            }
+            renderMenuItems();
+        }
+
+        function clearSearchInput() {
+            searchInput.value = '';
+            clearSearchBtn.classList.add('hidden');
+            renderMenuItems();
+        }
+    </script>
+</body>
+</html>
